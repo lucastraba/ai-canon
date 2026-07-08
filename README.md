@@ -2,7 +2,7 @@
 
 **One canonical repo for your team's AI agent customizations — synced into every repo, for every agent, on every OS.**
 
-Define your *canon* once — skills, rules, MCP servers, helper scripts — in a single git repo. Each consumer repo declares which subset it wants via a manifest. Developers run one command and get native config for the agents they actually use:
+Define your *canon* once (skills, rules, MCP servers, helper scripts) in a single git repo. Each consumer repo declares which subset it wants via a manifest. Developers run one command and get native config for the agents they actually use:
 
 | Agent | Skills | MCP | Rules |
 | --- | --- | --- | --- |
@@ -11,13 +11,13 @@ Define your *canon* once — skills, rules, MCP servers, helper scripts — in a
 | Cursor | `.cursor/skills/` | `.cursor/mcp.json` | `.cursor/rules/<ns>-rules.mdc` |
 | OpenCode | `.opencode/skills/` | `opencode.json` | — |
 
-(For rules, lean on [AGENTS.md](https://agents.md) — every major agent reads it now. ai-canon fills the gaps that are still tool-specific.)
+(For rules, lean on [AGENTS.md](https://agents.md): every major agent reads it now. ai-canon fills the gaps that are still tool-specific.)
 
 ## When to use this (and when not to)
 
-Tools like [rulesync](https://github.com/dyoshikawa/rulesync) and [Ruler](https://github.com/intellectronica/ruler) solve **one repo → many agents** and support far more tools than ai-canon does. If your canon lives happily inside a single repository, use them.
+Tools like [rulesync](https://github.com/dyoshikawa/rulesync) and [Ruler](https://github.com/intellectronica/ruler) solve **one repo → many agents** and support far more tools than ai-canon does. If your canon lives happily inside a single repository, use them. [Microsoft APM](https://github.com/microsoft/apm) covers multi-repo distribution too, as a full package ecosystem with manifests, lockfiles, and org governance; if you want packages from many sources across many agents, use that.
 
-ai-canon solves **one canon → many repos → many agents**:
+ai-canon is the small version of that idea, **one canon repo → many repos → many agents**, with a few safety behaviors the bigger tools skip:
 
 - A central, versioned canon repo owned by your platform/AI-enablement folks
 - Per-repo manifests: the backend repo gets backend skills, the frontend repo gets frontend skills, everyone gets the common set
@@ -69,7 +69,7 @@ npx ai-canon sync --agent claude,cursor --no-interactive
 npx ai-canon sync --agent codex --skill acme-test --mcp context7
 ```
 
-The canon is cloned/fetched into the repo-local, gitignored `.ai/.canon` on every run, so updating everyone is just `git push` to the canon repo — developers pick it up on their next sync.
+The canon is cloned/fetched into the repo-local, gitignored `.ai/.canon` on every run, so updating everyone is just `git push` to the canon repo; developers pick it up on their next sync.
 
 ### 4. Keep repos honest in CI
 
@@ -151,7 +151,7 @@ canonRef: v1.2.0       # optional pin (tag, branch, or commit; default: remote d
 
 ## Safety rules
 
-- Generated files are local developer state — keep them gitignored (`init` sets this up). They may contain resolved secrets.
+- Generated files are local developer state: keep them gitignored (`init` sets this up). They may contain resolved secrets.
 - Root agent config files (`.mcp.json`, `opencode.json`, …) are only overwritten when they contain the generated marker; otherwise sync refuses (override with `--force`).
 - Stale generated skills are removed only inside the canon's namespace prefix.
 - MCP servers with unresolved `${VAR}` placeholders are skipped and reported, never written.
