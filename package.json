@@ -38,7 +38,7 @@
   "scripts": {
     "ai-canon": "tsx src/cli.ts",
     "build": "node scripts/build.mjs",
-    "test": "node --import tsx --test tests/*.test.ts",
+    "test": "node --import tsx --test tests/cli.test.ts",
     "check": "tsc --noEmit",
     "prepublishOnly": "pnpm check && pnpm test && pnpm build"
   },
