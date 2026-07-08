@@ -4,13 +4,14 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 
-const root = new URL('..', import.meta.url).pathname;
+const root = fileURLToPath(new URL('..', import.meta.url));
 const cli = join(root, 'src', 'cli.ts');
 const fixture = join(root, 'tests', 'fixtures', 'canon');
 
 const runCli = (...args: string[]) =>
-  spawnSync('pnpm', ['exec', 'tsx', cli, ...args], {
+  spawnSync(process.execPath, ['--import', 'tsx', cli, ...args], {
     cwd: root,
     encoding: 'utf8',
   });
