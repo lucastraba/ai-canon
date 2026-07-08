@@ -1,0 +1,5 @@
+{
+  "name": "acme",
+  "namespace": "acme",
+  "sourceLabel": "github:acme/ai-canon-fixture"
+}

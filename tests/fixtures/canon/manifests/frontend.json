@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "repo": "frontend",
+  "skills": ["common/*.md"],
+  "rules": ["common.md"],
+  "mcp": ["common.json"],
+  "scripts": ["open-pr/*"],
+  "defaultAgents": ["claude", "cursor"]
+}

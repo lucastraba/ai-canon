@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "repo": "globtest",
+  "skills": ["common/acme-te*.md"],
+  "rules": [],
+  "mcp": [],
+  "scripts": [],
+  "defaultAgents": ["claude"]
+}

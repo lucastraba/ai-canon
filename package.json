@@ -1,0 +1,57 @@
+{
+  "name": "ai-canon",
+  "version": "0.1.0",
+  "description": "One canonical repo for your AI agent customizations — skills, rules, MCP servers — synced into every repo, for every agent (Claude Code, Codex, Cursor, OpenCode), on every OS.",
+  "keywords": [
+    "ai",
+    "agents",
+    "skills",
+    "mcp",
+    "claude-code",
+    "codex",
+    "cursor",
+    "opencode",
+    "agents-md",
+    "rules",
+    "sync",
+    "cli"
+  ],
+  "license": "MIT",
+  "author": "Lucas Traba",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucastraba/ai-canon.git"
+  },
+  "bugs": "https://github.com/lucastraba/ai-canon/issues",
+  "type": "module",
+  "bin": {
+    "ai-canon": "dist/cli.mjs"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "ai-canon": "tsx src/cli.ts",
+    "build": "node scripts/build.mjs",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "check": "tsc --noEmit",
+    "prepublishOnly": "pnpm check && pnpm test && pnpm build"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.4.0",
+    "chalk": "^5.6.2",
+    "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "esbuild": "^0.28.1",
+    "tsx": "^4.22.4",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "pnpm@10.24.0"
+}

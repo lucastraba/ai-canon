@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "repo": "backend",
+  "skills": ["common/*.md"],
+  "rules": ["common.md"],
+  "mcp": ["common.json"],
+  "scripts": [],
+  "defaultAgents": ["claude", "codex"]
+}
