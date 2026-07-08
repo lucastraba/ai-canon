@@ -1,29 +1,28 @@
 {
   "name": "ai-canon",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "One canonical repo for your AI agent customizations — skills, rules, MCP servers — synced into every repo, for every agent (Claude Code, Codex, Cursor, OpenCode), on every OS.",
   "keywords": [
-    "ai",
     "agents",
-    "skills",
-    "mcp",
+    "agents-md",
+    "ai",
     "claude-code",
+    "cli",
     "codex",
     "cursor",
+    "mcp",
     "opencode",
-    "agents-md",
     "rules",
-    "sync",
-    "cli"
+    "skills",
+    "sync"
   ],
+  "bugs": "https://github.com/lucastraba/ai-canon/issues",
   "license": "MIT",
   "author": "Lucas Traba",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lucastraba/ai-canon.git"
   },
-  "bugs": "https://github.com/lucastraba/ai-canon/issues",
-  "type": "module",
   "bin": {
     "ai-canon": "dist/cli.mjs"
   },
@@ -32,9 +31,7 @@
     "README.md",
     "LICENSE"
   ],
-  "engines": {
-    "node": ">=20.19.0"
-  },
+  "type": "module",
   "scripts": {
     "ai-canon": "tsx src/cli.ts",
     "build": "node scripts/build.mjs",
@@ -52,6 +49,9 @@
     "esbuild": "^0.28.1",
     "tsx": "^4.22.4",
     "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=20.19.0"
   },
   "packageManager": "pnpm@10.24.0"
 }
