@@ -1,8 +1,10 @@
 <p align="center">
-  <img src="./assets/ai-canon-logo.svg" alt="ai-canon — one canon, every repo, every agent" width="760">
+  <img src="./assets/ai-canon-logo.svg" alt="ai-canon convergence logo" width="160">
 </p>
 
-**One canonical repo for your team's AI agent customizations — synced into every repo, for every agent, on every OS.**
+<h1 align="center">ai-canon</h1>
+
+<p align="center"><strong>One canonical repo for your team's AI agent customizations — synced into every repo, for every agent, on every OS.</strong></p>
 
 Define your *canon* once (skills, rules, MCP servers, helper scripts) in a single git repo. Each consumer repo declares which subset it wants via a manifest. Developers run one command and get native config for the agents they actually use:
 
