@@ -27,6 +27,7 @@
     "ai-canon": "dist/cli.mjs"
   },
   "files": [
+    "assets",
     "dist",
     "README.md",
     "LICENSE",

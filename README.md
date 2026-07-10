@@ -1,4 +1,6 @@
-# ai-canon
+<p align="center">
+  <img src="./assets/ai-canon-logo.svg" alt="ai-canon — one canon, every repo, every agent" width="760">
+</p>
 
 **One canonical repo for your team's AI agent customizations — synced into every repo, for every agent, on every OS.**
 
