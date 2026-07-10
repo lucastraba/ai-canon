@@ -1,6 +1,6 @@
 {
   "name": "ai-canon",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Sync skills, rules, MCP servers, and helper scripts from one trusted AI canon into every repo and coding agent.",
   "keywords": [
     "agents",
