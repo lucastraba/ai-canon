@@ -903,10 +903,19 @@ const planWrite = (
 const isGitTracked = (root: string, file: string): boolean => {
   const rel = relative(root, file);
   if (!rel || rel.startsWith(`..${sep}`) || isAbsolute(rel)) return false;
-  return spawnSync('git', ['-C', root, 'ls-files', '--error-unmatch', '--', rel], {
-    encoding: 'utf8',
-    stdio: 'ignore',
-  }).status === 0;
+  const worktree = spawnSync('git', ['-C', root, 'rev-parse', '--is-inside-work-tree'], { encoding: 'utf8' });
+  if (worktree.error) {
+    if (existsSync(join(root, '.git'))) throw new Error(`Unable to inspect Git tracking state: ${worktree.error.message}`);
+    return false;
+  }
+  if (worktree.status !== 0 || worktree.stdout.trim() !== 'true') return false;
+
+  const tracked = spawnSync('git', ['-C', root, 'ls-files', '--error-unmatch', '--', rel], { encoding: 'utf8' });
+  if (tracked.error) throw new Error(`Unable to inspect Git tracking state: ${tracked.error.message}`);
+  if (tracked.status === 0) return true;
+  if (tracked.status === 1) return false;
+  const detail = [tracked.stdout, tracked.stderr].filter(Boolean).join('\n').trim();
+  throw new Error(redactUrl(`Unable to inspect Git tracking state${detail ? `:\n${detail}` : ''}`));
 };
 
 const skillDirs: Record<Agent, string> = {

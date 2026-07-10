@@ -372,6 +372,19 @@ test('a late write failure rolls back every earlier planned change', () => {
   assert.equal(existsSync(join(consumer, '.agents')), false);
 });
 
+test('rollback preserves pre-existing empty destination directories', () => {
+  const consumer = tmp();
+  writeFileSync(join(consumer, '.ai.yaml'), 'repo: backend\n');
+  mkdirSync(join(consumer, '.claude'));
+  writeFileSync(join(consumer, '.codex'), 'blocking file\n');
+
+  const result = runCli('sync', '--root', consumer, '--source', fixture, '--agent', 'claude,codex', '--no-interactive');
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /rolled back/);
+  assert.equal(existsSync(join(consumer, '.claude')), true);
+  assert.equal(existsSync(join(consumer, '.claude', 'skills')), false);
+});
+
 // --- Renderers -----------------------------------------------------------
 
 test('all four agent renderers emit native, owned config', () => {
@@ -426,6 +439,26 @@ test('sync refuses to place resolved config into a Git-tracked generated file', 
   assert.equal(result.status, 1);
   assert.match(result.stderr, /tracked by Git/);
   assert.equal(readFileSync(join(consumer, '.mcp.json'), 'utf8'), before);
+});
+
+test('sync fails closed when a repository index cannot be inspected', { skip: !hasGit || process.platform === 'win32' }, () => {
+  const consumer = tmp();
+  writeFileSync(join(consumer, '.ai.yaml'), 'repo: backend\n');
+  writeFileSync(join(consumer, '.mcp.json'), `{"_generated":"notice ${OWNERSHIP_TAG}","mcpServers":{}}\n`);
+  assert.equal(git(consumer, 'init', '-b', 'main').status, 0);
+  assert.equal(git(consumer, 'add', '.mcp.json').status, 0);
+  assert.equal(git(consumer, 'commit', '-m', 'track generated config').status, 0);
+  const before = readFileSync(join(consumer, '.mcp.json'), 'utf8');
+  const index = join(consumer, '.git', 'index');
+  chmodSync(index, 0o000);
+  try {
+    const result = runCli('sync', '--root', consumer, '--source', fixture, '--agent', 'claude', '--no-interactive');
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /Unable to inspect Git tracking state/);
+    assert.equal(readFileSync(join(consumer, '.mcp.json'), 'utf8'), before);
+  } finally {
+    chmodSync(index, 0o600);
+  }
 });
 
 test('script executable bit is preserved on POSIX', { skip: process.platform === 'win32' }, () => {
