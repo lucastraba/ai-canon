@@ -1,6 +1,6 @@
 {
   "name": "ai-canon",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "One canonical repo for your AI agent customizations — skills, rules, MCP servers — synced into every repo, for every agent (Claude Code, Codex, Cursor, OpenCode), on every OS.",
   "keywords": [
     "agents",
@@ -29,7 +29,9 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md",
+    "SECURITY.md"
   ],
   "type": "module",
   "scripts": {
@@ -37,7 +39,8 @@
     "build": "node scripts/build.mjs",
     "test": "node --import tsx --test tests/cli.test.ts",
     "check": "tsc --noEmit",
-    "prepublishOnly": "pnpm check && pnpm test && pnpm build"
+    "prepack": "node scripts/build.mjs",
+    "prepublishOnly": "pnpm check && pnpm test"
   },
   "dependencies": {
     "@clack/prompts": "^1.4.0",

@@ -48,6 +48,16 @@ manifests/
   <repo-name>.json          one manifest per consumer repo
 ```
 
+The scaffold includes `manifests/example.json`. Copy it once per consumer repo and edit the selected content:
+
+```sh
+cp manifests/example.json manifests/your-app.json
+# Edit "repo" to "your-app", then select the skills/rules/MCPs/scripts it needs.
+git add manifests/your-app.json && git commit -m "add your-app manifest" && git push
+```
+
+The filename must match the consumer's `repo` value (normally its directory name).
+
 ### 2. Wire up each consumer repo
 
 ```sh
@@ -69,6 +79,18 @@ npx ai-canon sync --agent claude,cursor --no-interactive
 npx ai-canon sync --agent codex --skill acme-test --mcp context7
 ```
 
+A successful first sync is explicit about every local file it created:
+
+```text
+ai-canon [acme]: your-app -> claude, codex
+Changes (5)
+  created      .claude/skills/acme-test/SKILL.md
+  created      .agents/skills/acme-test/SKILL.md
+  created      .mcp.json
+  created      .codex/config.toml
+  created      .ai.lock.json
+```
+
 The canon is cloned/fetched into the repo-local, gitignored `.ai/.canon` on every run, so updating everyone is just `git push` to the canon repo; developers pick it up on their next sync.
 
 ### 4. Keep repos honest in CI
@@ -85,12 +107,11 @@ npx ai-canon doctor --check   # exit 1 if generated files drifted from the canon
 {
   "name": "acme",
   "namespace": "acme",
-  "sourceLabel": "github:acme/our-ai-canon",
   "generatedNotice": "GENERATED FILE. Do not edit directly. Run: ai-canon sync"
 }
 ```
 
-`namespace` is the safety boundary: every canon skill must be named `<namespace>-*`, and stale-skill cleanup only ever deletes directories with that prefix. Developer-owned skills are never touched.
+`namespace` scopes every canon skill name to `<namespace>-*`. Stale cleanup also requires ai-canon's structured ownership marker, so hand-authored skills are left alone; the marker lets owned cleanup remain correct if a canon deliberately changes namespace.
 
 ### Skills
 
@@ -151,10 +172,14 @@ canonRef: v1.2.0       # optional pin (tag, branch, or commit; default: remote d
 
 ## Safety rules
 
-- Generated files are local developer state: keep them gitignored (`init` sets this up). They may contain resolved secrets.
-- Root agent config files (`.mcp.json`, `opencode.json`, …) are only overwritten when they contain the generated marker; otherwise sync refuses (override with `--force`).
-- Stale generated skills are removed only inside the canon's namespace prefix.
+- **Treat the canon repository as trusted code.** It distributes agent instructions, MCP commands, and executable helper scripts. Review canon changes like application code and protect who can push to it.
+- Generated files are local developer state: keep them gitignored (`init` sets this up). They may contain resolved secrets. Sync refuses secret-bearing generated config that is already tracked by Git; remove it from the index with `git rm --cached <path>` before continuing.
+- Every generated file carries a structured `[ai-canon:owned]` marker. Files at managed destinations—including skills, scripts, and root agent configs—are overwritten only when that marker (or a legacy 0.1 marker) proves ownership; otherwise sync refuses before changing anything. Override deliberately with `--force`.
+- Stale skills are removed only when ownership is proven (legacy 0.1 files additionally require the current namespace prefix). Stale owned scripts are cleaned only under `.ai/scripts/`.
+- Manifest paths are confined to their canon directories, and generated destinations are confined to the consumer repo. Absolute paths, traversal, backslashes, and escaping symlinks are rejected.
 - MCP servers with unresolved `${VAR}` placeholders are skipped and reported, never written.
+- Secret-bearing root MCP files are mode `0600` on POSIX. Git URLs are redacted in errors and lockfiles, but credentials should come from your Git credential manager rather than being embedded in URLs.
+- Sync validates and plans the whole operation before writing. Guard conflicts make no changes; a later filesystem failure rolls the entire plan back, and individual file replacement is atomic.
 
 ## Local canon development
 
@@ -165,6 +190,17 @@ AI_CANON_REF=origin/my-branch npx ai-canon sync                      # test a ca
 
 `.ai.lock.json` records which canon commit/content generated the current files (audit only).
 
+## Recovery and rollback
+
+- Preview drift without changing files: `npx ai-canon doctor --check`.
+- Inspect the configured source, manifest, pending changes, removals, and conflicts: `npx ai-canon doctor`.
+- Roll back by setting `canonRef` in `.ai.yaml` to a known tag or commit, then run `npx ai-canon sync --no-interactive`.
+- Return to the remote default branch by removing `canonRef` and syncing again.
+- If a generated root config was intentionally replaced by hand-authored content, sync stops before modifying anything. Move personal MCP entries to `.ai.local/mcp.json`, or review the replacement and use `--force` once.
+- If `.ai/.canon` is damaged, remove only that gitignored cache directory and sync again. ai-canon also replaces it automatically when the configured canon URL changes.
+
+`doctor --check` reports writes, updates, removals, conflicts, and lockfile drift, and exits 1 whenever the next sync would change local state.
+
 ## Development
 
 ```sh
@@ -173,6 +209,10 @@ pnpm check   # typecheck
 pnpm test    # e2e CLI tests
 pnpm build   # bundle dist/cli.mjs
 ```
+
+## Releasing
+
+Maintainers configure the repository's `NPM_TOKEN` secret once, bump `package.json`, update `CHANGELOG.md`, and push a matching `v<version>` tag. The release workflow reruns checks, publishes with npm provenance, and creates GitHub release notes. A mismatched tag fails before publishing.
 
 ## License
 

@@ -1,15 +1,13 @@
 import { build } from 'esbuild';
 
-// Bundle the CLI and its dependencies into a single zero-dependency ESM file.
-// The banner shims `require` because some bundled deps use CommonJS interop,
-// which esbuild's ESM output otherwise cannot satisfy.
+// Bundle first-party CLI code while leaving declared npm dependencies external.
+// Consumers install those dependencies normally, avoiding duplicate bundled and
+// installed copies and preserving their package metadata/licenses.
 await build({
   entryPoints: ['src/cli.ts'],
   bundle: true,
   platform: 'node',
   format: 'esm',
+  packages: 'external',
   outfile: 'dist/cli.mjs',
-  banner: {
-    js: "import { createRequire as __aiCanonCreateRequire } from 'node:module';\nconst require = __aiCanonCreateRequire(import.meta.url);",
-  },
 });
