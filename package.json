@@ -1,7 +1,7 @@
 {
   "name": "ai-canon",
   "version": "0.2.0",
-  "description": "One canonical repo for your AI agent customizations — skills, rules, MCP servers — synced into every repo, for every agent (Claude Code, Codex, Cursor, OpenCode), on every OS.",
+  "description": "Sync skills, rules, MCP servers, and helper scripts from one trusted AI canon into every repo and coding agent.",
   "keywords": [
     "agents",
     "agents-md",

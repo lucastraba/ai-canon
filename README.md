@@ -4,16 +4,16 @@
 
 <h1 align="center">ai-canon</h1>
 
-<p align="center"><strong>One canonical repo for your team's AI agent customizations — synced into every repo, for every agent, on every OS.</strong></p>
+<p align="center"><strong>Keep your team's AI agent customizations in one canonical repo, then sync them into every repo, agent, and OS.</strong></p>
 
 Define your *canon* once (skills, rules, MCP servers, helper scripts) in a single git repo. Each consumer repo declares which subset it wants via a manifest. Developers run one command and get native config for the agents they actually use:
 
 | Agent | Skills | MCP | Rules |
 | --- | --- | --- | --- |
-| Claude Code | `.claude/skills/` | `.mcp.json` | — |
-| Codex CLI | `.agents/skills/` | `.codex/config.toml` | — |
+| Claude Code | `.claude/skills/` | `.mcp.json` | Not applicable |
+| Codex CLI | `.agents/skills/` | `.codex/config.toml` | Not applicable |
 | Cursor | `.cursor/skills/` | `.cursor/mcp.json` | `.cursor/rules/<ns>-rules.mdc` |
-| OpenCode | `.opencode/skills/` | `opencode.json` | — |
+| OpenCode | `.opencode/skills/` | `opencode.json` | Not applicable |
 
 (For rules, lean on [AGENTS.md](https://agents.md): every major agent reads it now. ai-canon fills the gaps that are still tool-specific.)
 
@@ -178,7 +178,7 @@ canonRef: v1.2.0       # optional pin (tag, branch, or commit; default: remote d
 
 - **Treat the canon repository as trusted code.** It distributes agent instructions, MCP commands, and executable helper scripts. Review canon changes like application code and protect who can push to it.
 - Generated files are local developer state: keep them gitignored (`init` sets this up). They may contain resolved secrets. Sync refuses secret-bearing generated config that is already tracked by Git; remove it from the index with `git rm --cached <path>` before continuing.
-- Every generated file carries a structured `[ai-canon:owned]` marker. Files at managed destinations—including skills, scripts, and root agent configs—are overwritten only when that marker (or a legacy 0.1 marker) proves ownership; otherwise sync refuses before changing anything. Override deliberately with `--force`.
+- Every generated file carries a structured `[ai-canon:owned]` marker. Files at managed destinations (including skills, scripts, and root agent configs) are overwritten only when that marker or a legacy 0.1 marker proves ownership. Otherwise, sync refuses before changing anything. Override deliberately with `--force`.
 - Stale skills are removed only when ownership is proven (legacy 0.1 files additionally require the current namespace prefix). Stale owned scripts are cleaned only under `.ai/scripts/`.
 - Manifest paths are confined to their canon directories, and generated destinations are confined to the consumer repo. Absolute paths, traversal, backslashes, and escaping symlinks are rejected.
 - MCP servers with unresolved `${VAR}` placeholders are skipped and reported, never written.
