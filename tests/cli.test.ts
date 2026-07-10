@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { chmodSync, mkdtempSync, readFileSync, realpathSync, statSync, symlinkSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { devNull, tmpdir } from 'node:os';
+import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const cli = join(root, 'src', 'cli.ts');
@@ -36,14 +36,16 @@ const manifest = (over: Record<string, unknown> = {}) =>
   JSON.stringify({ version: 1, skills: [], rules: [], mcp: [], scripts: [], ...over });
 const skillFile = (name: string) => `---\nname: ${name}\ndescription: ${name} skill.\n---\n\n# ${name}\n\nBody.\n`;
 
+const gitConfig = join(tmp('ai-canon-gitconfig-'), 'config');
+writeFileSync(gitConfig, '');
 const gitEnv = {
   ...process.env,
   GIT_AUTHOR_NAME: 'test',
   GIT_AUTHOR_EMAIL: 'test@example.com',
   GIT_COMMITTER_NAME: 'test',
   GIT_COMMITTER_EMAIL: 'test@example.com',
-  GIT_CONFIG_GLOBAL: devNull,
-  GIT_CONFIG_SYSTEM: devNull,
+  GIT_CONFIG_GLOBAL: gitConfig,
+  GIT_CONFIG_SYSTEM: gitConfig,
 };
 const git = (cwd: string, ...args: string[]) => spawnSync('git', args, { cwd, encoding: 'utf8', env: gitEnv });
 const hasGit = spawnSync('git', ['--version']).status === 0;
@@ -55,7 +57,7 @@ const gitCanon = (files: Record<string, string>): string => {
   git(dir, 'commit', '--no-gpg-sign', '-m', 'init');
   return dir;
 };
-const fileUrl = (path: string) => `file://${path}`;
+const fileUrl = (path: string) => pathToFileURL(path).href;
 
 test('sync refuses to overwrite hand-authored root config', () => {
   const consumer = mkdtempSync(join(tmpdir(), 'ai-canon-'));

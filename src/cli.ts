@@ -920,7 +920,7 @@ const planScripts = (ctx: Context, writes: PlannedWrite[], expectedScripts: Set<
   const scriptsBase = join(ctx.source, 'canon', 'scripts');
   const destBase = join(ctx.root, '.ai', 'scripts');
   for (const source of expandPatterns(scriptsBase, ctx.manifest.scripts, 'scripts')) {
-    const rel = relative(scriptsBase, source);
+    const rel = relative(scriptsBase, source).split(sep).join('/');
     assertSafeRelative(rel, 'script');
     const dest = join(destBase, rel);
     assertWithin(destBase, dest, 'script destination');
