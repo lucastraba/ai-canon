@@ -12,8 +12,8 @@ importers:
         specifier: ^1.4.0
         version: 1.7.0
       chalk:
-        specifier: ^5.6.2
-        version: 5.6.2
+        specifier: ^6.0.1
+        version: 6.0.1
       yaml:
         specifier: ^2.9.0
         version: 2.9.0
@@ -200,9 +200,9 @@ packages:
   '@types/node@25.9.4':
     resolution: {integrity: sha512-dszCsrKb5U7ZsVZBWiHFklTloVl0mSEnWH/iZXfZUlI4rzCUnsvGmgqfuVRHL54ugE7/wRuxEIXRa2iMZ+BG6g==}
 
-  chalk@5.6.2:
-    resolution: {integrity: sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==}
-    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
+  chalk@6.0.1:
+    resolution: {integrity: sha512-/Ce6KNm3vIbWdMlNna6RVIZ/ICQxnJxCicet5LBKK9ZffBkqzDw0xh9EiKSljdRtiIQ1S1z4YgcscUUGzNCWrA==}
+    engines: {node: '>=22'}
 
   esbuild@0.28.1:
     resolution: {integrity: sha512-HrJrvZv5ayxBzPfwphOoNzkzOIIlifzk0KJrGK2c8R4+LKpMtpYLQeUdjnwjWv/LZlkH2laZk+4w78pi99D4Vw==}
@@ -340,7 +340,7 @@ snapshots:
     dependencies:
       undici-types: 7.24.6
 
-  chalk@5.6.2: {}
+  chalk@6.0.1: {}
 
   esbuild@0.28.1:
     optionalDependencies:
